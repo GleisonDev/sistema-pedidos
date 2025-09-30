@@ -1,6 +1,7 @@
 package com.gleison.pedidos.application.service;
 
 import com.gleison.pedidos.application.contracts.ProdutoContracts;
+import com.gleison.pedidos.application.exception.ResourceNotFoundException;
 import com.gleison.pedidos.domain.gateway.ProdutoGateway;
 import com.gleison.pedidos.domain.model.Produto;
 import com.gleison.pedidos.infrastructure.api.produto.controller.post.request.AtualizaProdutoRequestDTO;
@@ -35,7 +36,7 @@ public class ProdutoService implements ProdutoContracts {
     @Transactional(readOnly = true)
     public ProdutoResponseDTO buscarPorId(Long id) {
         Produto produto = gateway.findByIdAndAtivoTrue(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
 
         return mapper.toResponse(produto);
     }
@@ -54,7 +55,7 @@ public class ProdutoService implements ProdutoContracts {
     @Transactional
     public ProdutoResponseDTO atualizar(Long id, AtualizaProdutoRequestDTO request) {
         Produto produtoAtual = gateway.findByIdAndAtivoTrue(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado para atualização com ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado para atualização com ID: " + id));
 
         mapper.updateEntityFromDto(request, produtoAtual);
 
@@ -67,7 +68,7 @@ public class ProdutoService implements ProdutoContracts {
     @Transactional
     public void deletar(Long id) {
         Produto produto = gateway.findByIdAndAtivoTrue(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado para inativação com ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado para inativação com ID: " + id));
 
         produto.setAtivo(false);
 

@@ -1,17 +1,8 @@
 package com.gleison.pedidos.domain.model;
 
 import com.gleison.pedidos.domain.enums.StatusPedido;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,16 +17,27 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
-    private LocalDateTime dataCriacao;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    private StatusPedido status = StatusPedido.CRIADO;
-
-    private BigDecimal valorTotal;
+    private StatusPedido status = StatusPedido.PENDENTE;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens = new ArrayList<>();
 
+    private BigDecimal valorTotal = BigDecimal.ZERO;
+
+    private Boolean ativo = true;
+
+    public void adicionarItem(ItemPedido item) {
+        if (item != null) {
+            itens.add(item);
+            item.setPedido(this);
+        }
+    }
 
 }

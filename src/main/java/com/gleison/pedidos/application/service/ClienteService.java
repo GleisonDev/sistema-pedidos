@@ -1,6 +1,8 @@
 package com.gleison.pedidos.application.service;
 
 import com.gleison.pedidos.application.contracts.ClienteContracts;
+import com.gleison.pedidos.application.exception.BusinessValidationException;
+import com.gleison.pedidos.application.exception.ResourceNotFoundException;
 import com.gleison.pedidos.domain.gateway.ClienteGateway;
 import com.gleison.pedidos.domain.model.Cliente;
 import com.gleison.pedidos.infrastructure.api.cliente.controller.post.request.AtualizaClienteRequestDTO;
@@ -24,16 +26,16 @@ public class ClienteService implements ClienteContracts {
 
     private void validarUnicidade(String cpf, String email) {
         if (gateway.findByCpf(cpf).isPresent()) {
-            throw new RuntimeException("CPF já cadastrado.");
+            throw new BusinessValidationException("CPF já cadastrado.");
         }
         if (gateway.findByEmail(email).isPresent()) {
-            throw new RuntimeException("E-mail já cadastrado.");
+            throw new BusinessValidationException("E-mail já cadastrado.");
         }
     }
 
     private Cliente buscarClienteAtivo(Long id) {
         return gateway.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
     }
 
     @Override
@@ -71,12 +73,12 @@ public class ClienteService implements ClienteContracts {
 
         if (request.cpf() != null && !request.cpf().equals(clienteAtual.getCpf())) {
             if (gateway.findByCpf(request.cpf()).isPresent()) {
-                throw new RuntimeException("Novo CPF já cadastrado.");
+                throw new BusinessValidationException("Novo CPF já cadastrado.");
             }
         }
         if (request.email() != null && !request.email().equals(clienteAtual.getEmail())) {
             if (gateway.findByEmail(request.email()).isPresent()) {
-                throw new RuntimeException("Novo E-mail já cadastrado.");
+                throw new BusinessValidationException("Novo E-mail já cadastrado.");
             }
         }
 
@@ -89,7 +91,6 @@ public class ClienteService implements ClienteContracts {
     public void desativar(Long id) {
         Cliente cliente = buscarClienteAtivo(id);
 
-        // Soft Delete
         cliente.setAtivo(false);
         gateway.save(cliente);
     }
@@ -98,7 +99,7 @@ public class ClienteService implements ClienteContracts {
     @Transactional(readOnly = true)
     public ClienteResponseDTO buscarPorCpf(String cpf) {
         Cliente cliente = gateway.findByCpf(cpf)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com CPF: " + cpf));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com CPF: " + cpf));
 
         return mapper.toResponse(cliente);
     }

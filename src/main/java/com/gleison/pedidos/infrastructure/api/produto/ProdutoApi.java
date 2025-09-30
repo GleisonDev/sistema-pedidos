@@ -61,7 +61,7 @@ public interface ProdutoApi {
     ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable Long id,
                                                         @RequestBody @Valid AtualizaProdutoRequestDTO request);
 
-    @DeleteMapping("/{id}/ativo")
+    @DeleteMapping("/{id}")
     @Operation(
             summary = "Inativar um produto (Soft Delete)",
             description = "Define a flag 'ativo' como false para um produto, removendo-o da visualização. Resposta 204 No Content.",
