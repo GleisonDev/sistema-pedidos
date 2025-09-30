@@ -14,4 +14,9 @@ public interface ProdutoRepository extends CustomJpaRepository<Produto, Long>, P
 
     List<Produto> findAllByAtivoTrue();
 
+    @Override
+    default Optional<Produto> findById(Long id) {
+        return findByIdAndAtivoTrue(id);
+    }
+
 }
