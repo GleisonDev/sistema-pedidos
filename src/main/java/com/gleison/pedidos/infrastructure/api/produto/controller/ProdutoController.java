@@ -8,6 +8,7 @@ import com.gleison.pedidos.infrastructure.api.produto.controller.post.response.P
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class ProdutoController implements ProdutoApi {
     }
 
     @Override
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void desativarProduto(Long id) {
         contracts.deletar(id);
     }

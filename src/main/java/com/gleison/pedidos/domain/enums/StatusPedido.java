@@ -1,5 +1,5 @@
 package com.gleison.pedidos.domain.enums;
 
 public enum StatusPedido {
-    CRIADO, PENDENTE_PAGAMENTO, PAGO, CANCELADO, ENTREGUE
+    PENDENTE,PAGO,EM_PREPARACAO,FINALIZADO,CANCELADO
 }
